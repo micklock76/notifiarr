@@ -4,20 +4,20 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"strconv"
 
 	"github.com/Notifiarr/notifiarr/pkg/apps"
 	"github.com/Notifiarr/notifiarr/pkg/configfile"
-	"github.com/Notifiarr/notifiarr/pkg/mnd"
 	"github.com/Notifiarr/notifiarr/pkg/services"
 	"github.com/Notifiarr/notifiarr/pkg/snapshot"
 	"github.com/Notifiarr/notifiarr/pkg/triggers/commands"
 	"github.com/Notifiarr/notifiarr/pkg/triggers/common"
 	"github.com/Notifiarr/notifiarr/pkg/website"
 	"github.com/gorilla/mux"
-	"github.com/hekmon/transmissionrpc/v2"
+	"github.com/hekmon/transmissionrpc/v3"
 	"golift.io/deluge"
 	"golift.io/nzbget"
 	"golift.io/qbit"
@@ -197,12 +197,8 @@ func testRtorrent(config *apps.RtorrentConfig) (string, int) {
 }
 
 func testTransmission(ctx context.Context, config *apps.XmissionConfig) (string, int) {
-	client := transmissionrpc.NewClient(transmissionrpc.Config{
-		URL:       config.URL,
-		Username:  config.User,
-		Password:  config.Pass,
-		UserAgent: mnd.Title,
-	})
+	u, _ := url.Parse(config.URL)
+	client, _ := transmissionrpc.New(u, nil)
 
 	args, err := client.SessionArgumentsGetAll(ctx)
 	if err != nil {

@@ -3,13 +3,14 @@ package apps
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/Notifiarr/notifiarr/pkg/apps/apppkg/plex"
 	"github.com/Notifiarr/notifiarr/pkg/apps/apppkg/sabnzbd"
 	"github.com/Notifiarr/notifiarr/pkg/apps/apppkg/tautulli"
 	"github.com/Notifiarr/notifiarr/pkg/mnd"
-	"github.com/hekmon/transmissionrpc/v2"
+	"github.com/hekmon/transmissionrpc/v3"
 	"github.com/mrobinsn/go-rtorrent/xmlrpc"
 	"golift.io/deluge"
 	"golift.io/nzbget"
@@ -334,6 +335,11 @@ func (a *Apps) setupTransmission() error {
 			return fmt.Errorf("%w: URL must begin with http:// or https://: Transmission config %d", ErrInvalidApp, idx+1)
 		}
 
+		endpoint, err := url.Parse(app.URL)
+		if err != nil {
+			return fmt.Errorf("%w: URL failed to parse: Transmission config %d", err, idx+1)
+		}
+
 		var client *http.Client
 		if a.Logger != nil && a.Logger.DebugEnabled() {
 			client = starr.ClientWithDebug(app.Timeout.Duration, app.ValidSSL, debuglog.Config{
@@ -347,13 +353,16 @@ func (a *Apps) setupTransmission() error {
 			client.Transport = NewMetricsRoundTripper("Transmission", client.Transport)
 		}
 
-		a.Transmission[idx].Client = transmissionrpc.NewClient(transmissionrpc.Config{
-			URL:       app.URL,
-			Username:  app.User,
-			Password:  app.Pass,
-			UserAgent: mnd.Title,
-			Client:    client,
-		})
+		// endpoint, err := url.Parse("http://%s:%s@127.0.0.1:9091/transmission/rpc")
+		if app.User != "" {
+			endpoint.User = url.UserPassword(app.User, app.Pass)
+		}
+
+		if endpoint.RawPath == "/" || endpoint.RawPath == "" {
+			endpoint.RawPath = "/transmission/rpc"
+		}
+
+		a.Transmission[idx].Client, _ = transmissionrpc.New(endpoint, &transmissionrpc.Config{CustomClient: client})
 	}
 
 	return nil

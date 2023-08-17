@@ -2,8 +2,6 @@ module github.com/Notifiarr/notifiarr
 
 go 1.20
 
-replace github.com/hekmon/transmissionrpc/v2 => github.com/twitchcaptain/transmissionrpc/v2 v2.0.0-20230615075430-65420002ecea
-
 // pflag and tail are pinned to master. 12/31/2022
 
 require (
@@ -22,7 +20,6 @@ require (
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b
-	github.com/hekmon/transmissionrpc/v2 v2.0.1
 	github.com/hugelgupf/go-shlex v0.0.0-20200702092117-c80c9d0918fa
 	github.com/jackpal/gateway v1.0.10
 	github.com/jaypipes/ghw v0.12.0
@@ -79,12 +76,13 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hekmon/cunits/v2 v2.1.0 // indirect
+	github.com/hekmon/transmissionrpc/v3 v3.0.0-beta1 // indirect
 	github.com/jaypipes/pcidb v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kdomanski/iso9660 v0.3.5 // indirect
-	github.com/kr/pretty v0.3.1 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/lestrrat-go/strftime v1.0.6 // indirect
 	github.com/lufia/plan9stats v0.0.0-20230326075908-cb1d2100619a // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
