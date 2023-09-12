@@ -48,6 +48,11 @@ func (c *Config) SetReloadCh(sighup chan os.Signal) {
 	}
 }
 
+// GetReloadCh returns the channel saved previously.
+func (c *Config) GetReloadCh() chan os.Signal {
+	return c.reloadCh
+}
+
 // ReloadApp reloads the application configuration.
 func (c *Config) ReloadApp(reason string) {
 	if c.reloadCh == nil {

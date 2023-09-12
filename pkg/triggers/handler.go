@@ -1,6 +1,7 @@
 package triggers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path"
@@ -10,8 +11,10 @@ import (
 
 	"github.com/Notifiarr/notifiarr/pkg/logs/share"
 	"github.com/Notifiarr/notifiarr/pkg/triggers/common"
+	"github.com/Notifiarr/notifiarr/pkg/triggers/data"
 	"github.com/Notifiarr/notifiarr/pkg/ui"
 	"github.com/Notifiarr/notifiarr/pkg/website"
+	"github.com/Notifiarr/notifiarr/pkg/website/clientinfo"
 	"github.com/gorilla/mux"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -132,6 +135,8 @@ func (a *Actions) runTrigger(input *common.ActionInput, trigger, content string)
 		return a.rpsync(input, content)
 	case "services":
 		return a.services(input)
+	case "clientinfo":
+		return a.updateClientInfo(input)
 	case "sessions":
 		return a.sessions(input)
 	case "stuckitems":
@@ -297,6 +302,37 @@ func (a *Actions) rpsync(input *common.ActionInput, content string) (int, string
 func (a *Actions) services(input *common.ActionInput) (int, string) {
 	a.Timers.RunChecks(input.Type)
 	return http.StatusOK, "All service checks rescheduled for immediate execution."
+}
+
+// @Description  Update the running client info and restart all trigger timers.
+// @Summary      Update client info
+// @Tags         Triggers
+// @Produce      json
+// @Param        args formData string true "provide json as 'args' paramers in POST body" example(args={"form": "encoded/json"})
+// @Accept       application/x-www-form-urlencoded
+// @Success      200  {object} apps.Respond.apiResponse{message=string} "client info updated"
+// @Failure      400  {object} string "invalid json client info body"
+// @Failure      411  {object} string "no args= provided in the body"
+// @Failure      404  {object} string "bad token or api key"
+// @Router       /api/trigger/clientinfo [post]
+// @Security     ApiKeyAuth
+//
+//nolint:lll
+func (a *Actions) updateClientInfo(input *common.ActionInput) (int, string) {
+	if len(input.Args) != 1 {
+		return http.StatusLengthRequired, "missing json body in args="
+	}
+
+	clientInfo := clientinfo.ClientInfo{}
+	if err := json.Unmarshal([]byte(input.Args[0]), &clientInfo); err != nil {
+		return http.StatusBadRequest, fmt.Sprintf("parsing response: %v, %s", err, input.Args[0])
+	}
+
+	// Only set this if there was no error.
+	data.Save("clientInfo", &clientInfo)
+	a.Reload(website.EventAPI)
+
+	return http.StatusOK, "client info updated"
 }
 
 // @Description  Collect Plex sessions and send a notifciation.

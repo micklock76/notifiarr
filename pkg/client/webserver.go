@@ -176,10 +176,6 @@ func (c *Client) StopWebServer(ctx context.Context) error {
 		menu["stat"].SetTooltip("web server paused, click to start")
 	}
 
-	if c.tunnel != nil {
-		defer c.tunnel.Shutdown()
-	}
-
 	if err := c.server.Shutdown(ctx); err != nil {
 		return fmt.Errorf("shutting down web server: %w", err)
 	}

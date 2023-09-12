@@ -43,6 +43,7 @@ type Config struct {
 // Actions defines all our triggers and timers.
 // Any action here will automatically have its interface methods called.
 type Actions struct {
+	ctx    context.Context //nolint:containedctx // only used for reload.
 	Timers *common.Config
 	// Order is important here.
 	PlexCron   *plexcron.Action
@@ -102,8 +103,10 @@ type run interface {
 
 // Start creates all the triggers and runs the timers.
 func (a *Actions) Start(ctx context.Context, reloadCh chan os.Signal) {
-	a.Timers.SetReloadCh(reloadCh)
+	a.ctx = ctx
 	defer a.Timers.Run(ctx)
+
+	a.Timers.SetReloadCh(reloadCh)
 
 	actions := reflect.ValueOf(a).Elem()
 	for i := 0; i < actions.NumField(); i++ {
@@ -119,6 +122,17 @@ func (a *Actions) Start(ctx context.Context, reloadCh chan os.Signal) {
 		if action, ok := actions.Field(i).Interface().(run); ok {
 			action.Run()
 		}
+	}
+}
+
+// Reload actions. Just calls stop and start.
+func (a *Actions) Reload(event website.EventType) {
+	if a.ctx != nil {
+		reloadCh := a.Timers.GetReloadCh()
+		a.Stop(event)
+		a.Start(a.ctx, reloadCh)
+	} else {
+		a.Timers.Errorf("Tried to reload actions without a context.")
 	}
 }
 
