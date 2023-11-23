@@ -105,21 +105,21 @@ retries = 4
 ## Setting any application timeout to "-1s" will disable that application.
 
 #[[lidarr]]
-#name     = "" # Set a name to enable checks of your service.
-#url      = "http://lidarr:8989/"
+#name     = "" # lidarr.
+#url      = "http://192.168.10.49:8985/"
 #api_key  = ""
 
 
 #[[prowlarr]]
-#name     = "" # Set a name to enable checks of your service.
-#url      = "http://prowlarr:9696/"
+#name     = "" # Prowlarr.
+#url      = "http://192.168.10.49:8084/"
 #api_key  = ""
 
 
 #[[radarr]]
-#name      = "" # Set a name to enable checks of your service.
-#url       = "http://127.0.0.1:7878/"
-#api_key   = ""
+#name      = "" # Radarr.
+#url       = "http://192.168.10.49:8083/"
+#api_key   = "075cbed038de4700a51ebc36c200d872"
 
 
 #[[readarr]]
@@ -129,9 +129,9 @@ retries = 4
 
 
 #[[sonarr]]
-#name      = ""  # Set a name to enable checks of your service.
-#url       = "http://sonarr:8989/"
-#api_key   = ""
+#name      = ""  # Sonarr.
+#url       = "http://192.168.10.49:8082/"
+#api_key   = "2d822f25126349959f91ef9fbff3e75d"
 
 
 # Download Client Configs (below) are used for dashboard state and service checks.
@@ -143,10 +143,10 @@ retries = 4
 
 
 #[[qbit]]
-#name     = ""  # Set a name to enable checks of your service.
+#name     = ""  # Qbittorrent.
 #url      = "http://qbit:8080/"
-#user     = ""
-#pass     = ""
+#user     = "Qbittorrent"
+#pass     = "qbittorrent"
 
 
 #[[rtorrent]]
@@ -164,9 +164,9 @@ retries = 4
 
 
 #[[sabnzbd]]
-#name     = ""  # Set a name to enable checks of this application.
-#url      = "http://sabnzbd:8080/"
-#api_key  = ""
+#name     = ""  # SABnzbd.
+#url      = "http://192.168.10.49:8081/"
+#api_key  = "08f35da481b64d8db1f488f14db6d0e2"
 
 
 #################
@@ -176,8 +176,8 @@ retries = 4
 ## Find your token: https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 ##
 #[plex]
-#url     = "http://localhost:32400/" # Your plex URL
-#token   = "" # your plex token; get this from a web inspector
+#url     = "http://192.168.10.49:32400/" # Your plex URL
+#token   = "pSfwoz2u1EVmcN-wAL1p" # your plex token; get this from a web inspector
 
 #####################
 # Tautulli Settings #
